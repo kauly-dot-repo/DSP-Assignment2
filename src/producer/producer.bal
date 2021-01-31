@@ -4,14 +4,15 @@ import ballerina/graphql;
 import ballerina/io;
 import ballerina/kubernetes;
 import ballerina/docker;
+//import ballerina/docker;
 
 //This is both the graphQL api and producer -- producer send messages to kafka
  
 // @docker:Config {
-//   name:"producer",
+//   name:"register_candi",
 //   tag:"v1.0"
 // }
-// @kubernetes:Deployment { image:"producer-service", name:"kafka-producer" }
+// @kubernetes:Deployment { image:"consumer-service", name:"kafka-consumer" }
 
 //Producer for registering candidates
 kafka:ProducerConfiguration Candidate_Register = {
@@ -48,7 +49,7 @@ kafka:ProducerConfiguration register_voter = {
 //information storage - local store
 map<json> registered_candidate_voters ={};
 map<json> register_vote ={};
-map<json> accepted_vote ={};//create a file that stores all the votes
+map<json> accepted_vote ={};//create a file that stores all the
 
 
 kafka:Producer prod =checkpanic new (Candidate_Register);
@@ -61,17 +62,17 @@ kafka:Producer vote_register_prod =checkpanic new (register_voter);
 }
 
 @docker:Config{
-    name: "producer",
+    name: "votes-consumer",
     tag: "v1.0"
 }
 
-//graphql service listening on port 9090
+//graphql service listening 9090
 service graphql:Service /graphql on new graphql:Listener(9090) {
  //register candidate
-    resource function get register_candidate(string name,int id,string ruling_party) returns string {
-            Candidate candidate ={name,id,ruling_party};
+    resource function get register_candidate(string name,int id,string department) returns string {
+            Candidate candidate ={name,id,department};
             //using the id number as an index in the array
-            registered_candidate_voters[id.toString()] = {name:name,vID:id,party:ruling_party};
+            registered_candidate_voters[id.toString()] = {name:name,vID:id,party:department};
             byte[] serialisedMsg = candidate.toString().toBytes();
 
 //call producer to send messages to a topic "candidateReg" 
@@ -108,10 +109,10 @@ service graphql:Service /graphql on new graphql:Listener(9090) {
     }
 
 // register as a voter--------------------------------------------------------
-     resource function get register_vote(string name,int namibian_id) returns string {
-            Registered_voter vote_info ={name,namibian_id};
-            // Candidate candidate ={name,id,ruling_party};
-            register_vote[namibian_id.toString()] = {name:name,namibian_id:namibian_id};
+     resource function get register_vote(string name,int company_id) returns string {
+            Registered_voter vote_info ={name,company_id};
+            // Candidate candidate ={name,id,department};
+            register_vote[company_id.toString()] = {name:name,company_id:company_id};
 
             byte[] serialisedMsg = vote_info.toString().toBytes();
 
@@ -131,15 +132,16 @@ service graphql:Service /graphql on new graphql:Listener(9090) {
 public type Candidate record {
     string name;
     int id;
-    string ruling_party;
+    string department;
 };
+
 public type Vote record {
     int voterID;
     int candidateID;
     
 };
+
 public type Registered_voter record {
     string name;
-    int namibian_id;
+    int company_id;
 };
-
