@@ -2,8 +2,7 @@ import ballerina/io;
 import ballerina/http;
 
 
-
-//interface
+//interface that we interact with when we first start the project
 http:Client clientEndpoint = check new ("http://localhost:9090");
 public function main () {
 
