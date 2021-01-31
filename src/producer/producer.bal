@@ -8,10 +8,10 @@ import ballerina/docker;
 //This is both the graphQL api and producer -- producer send messages to kafka
  
 // @docker:Config {
-//   name:"register_candi",
+//   name:"producer",
 //   tag:"v1.0"
 // }
-// @kubernetes:Deployment { image:"consumer-service", name:"kafka-consumer" }
+// @kubernetes:Deployment { image:"producer-service", name:"kafka-producer" }
 
 //Producer for registering candidates
 kafka:ProducerConfiguration Candidate_Register = {
@@ -61,11 +61,11 @@ kafka:Producer vote_register_prod =checkpanic new (register_voter);
 }
 
 @docker:Config{
-    name: "votes-consumer",
+    name: "producer",
     tag: "v1.0"
 }
 
-//graphql service listening 9090
+//graphql service listening on port 9090
 service graphql:Service /graphql on new graphql:Listener(9090) {
  //register candidate
     resource function get register_candidate(string name,int id,string ruling_party) returns string {
