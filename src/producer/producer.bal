@@ -62,7 +62,7 @@ kafka:Producer vote_register_prod =checkpanic new (register_voter);
 }
 
 @docker:Config{
-    name: "votes-consumer",
+    name: "producer",
     tag: "v1.0"
 }
 
