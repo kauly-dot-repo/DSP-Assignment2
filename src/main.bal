@@ -7,7 +7,7 @@ import ballerina/http;
 http:Client clientEndpoint = check new ("http://localhost:9090");
 public function main () {
 
-        io:println("WELCOME TO VoT");
+        io:println("WELCOME TO VoTo");
         io:println("------------------------");
         io:println("Have you registered to vote ");
         io:println("press 1 for yes  ");// vote
