@@ -15,7 +15,16 @@ kafka:ConsumerConfiguration consConf = {
     autoCommit: false
 };
 
+@kubernetes:Deployment{
+    image:"",
+    name:""
+}
 
+
+@docker:Config{
+    name: "votes-consumer",
+    tag: "v1.0"
+}
 
 listener kafka:Listener cons = new (consConf);
 
